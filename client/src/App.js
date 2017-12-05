@@ -36,40 +36,51 @@ const Footer = (props) =>
    </p>
  </div>
 
-const Blog = (props) =>
+// blog individual row component
+const BlogRow = (props) =>
   <div className="blog-container">
     <h3 className="title"><NavLink to={`/${props.title}`}>{props.title}</NavLink></h3>
     <p className="descriptions">{props.descriptions}</p>
     <p className="date">{props.date}</p>
   </div>
 
+// blog header component
+const BlogCategoryRow = (props) =>
+  <div>
+    <div className="line-separation"></div>
+    <h2>{props.category}</h2>
+  </div>
+
+// blog list component
 const BlogList = (props) => {
-  let blogs = props.blogData.map((blog) => {
-    //if (blog.type)
-    return <Blog title={blog.title}
-                descriptions={blog.descriptions}
-                date={blog.date}
-                link={blog.link} />
+  // set up starting blogs
+  const blogs = [];
+  // set up variable to store and compare category
+  let lastCategory = null;
+
+  // iterate and sort blog data
+  props.blogData.forEach((blog) => {
+    // if blog catergory isn't equal then add blog category header
+    if (blog.category.toLowerCase() !== lastCategory) {
+      blogs.push(
+        <BlogCategoryRow
+          category={blog.category} />
+      );
+    }
+    // if blog catergory is the same then add blog in
+    blogs.push(<BlogRow title={blog.title}
+      descriptions={blog.descriptions}
+      date={blog.date}
+      link={blog.link} />
+    );
+    // store blog category in variable to be compared
+    lastCategory = blog.category.toLowerCase();
   });
   return (
     <div>
       {blogs}
     </div>
   );
-}
-const ProjectList = (props) => {
-  let projects = props.projectData.map(project => {
-    return (
-      <Project title={project.title}
-               descriptions={project.descriptions}
-               imageUrl={project.imageUrl}
-               linkSourceCode={project.linkSourceCode}
-               linkDemo={project.linkDemo}/>
-    )
-  })
-  return (<div>
-     {projects}
-    </div>)
 }
 
 const Project = (props) => {
@@ -118,34 +129,67 @@ class App extends Component {
   }
 }
 
+const Home = (props) =>
+  <Layout>
+    <h1>This is Home Page</h1>
+    <BlogList blogData={blogData}/>
+  </Layout>
+
+const ProjectPage = (props) =>
+  <Layout>
+    <h1>This is Project Page</h1>
+    <ProjectList projectData={projectData}/>
+  </Layout>
+
+const NotFound = (props) =>
+   <div>
+    <h1>Page Not Found</h1>
+   </div>
+
+class App extends Component {
+  render() {
+    return (
+      <BrowserRouter>
+        <div className="App">
+          <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/projects" component={ProjectPage}/>
+              <Route component={NotFound}/>
+          </Switch>
+        </div>
+      </BrowserRouter>
+    );
+  }
+}
+
 const blogData = [
   {
     title: "Example Title",
     descriptions: "Duo ea omnes altera mediocrem, putent perfecto tincidunt in cum, ut sed delenit nusquam. Soleat discere has no, nec volutpat deterruisset concludaturque et. Cu pri congue phaedrum. Mentitum inimicus in usu, cum tibique corrumpit cu, nostrud equidem mel id.",
     date: "March 15, 2015",
     link: "https://example.com",
-    type: "Tutorials"
+    category: "Tutorials"
   },
   {
     title: "Example Title",
     descriptions: "Duo ea omnes altera mediocrem, putent perfecto tincidunt in cum, ut sed delenit nusquam. Soleat discere has no, nec volutpat deterruisset concludaturque et. Cu pri congue phaedrum. Mentitum inimicus in usu, cum tibique corrumpit cu, nostrud equidem mel id.",
     date: "June 23, 2015",
     link: "https://example.com",
-    type: "Personal"
+    category: "Personal"
   },
   {
     title: "Example Title",
     descriptions: "Duo ea omnes altera mediocrem, putent perfecto tincidunt in cum, ut sed delenit nusquam. Soleat discere has no, nec volutpat deterruisset concludaturque et. Cu pri congue phaedrum. Mentitum inimicus in usu, cum tibique corrumpit cu, nostrud equidem mel id.",
     date: "Aug 12, 2015",
     link: "https://example.com",
-    type: "Recurse Center"
+    category: "Recurse Center"
   },
   {
     title: "Example Title",
     descriptions: "Duo ea omnes altera mediocrem, putent perfecto tincidunt in cum, ut sed delenit nusquam. Soleat discere has no, nec volutpat deterruisset concludaturque et. Cu pri congue phaedrum. Mentitum inimicus in usu, cum tibique corrumpit cu, nostrud equidem mel id.",
     date: "June 79, 2015",
     link: "https://example.com",
-    type: "Recurse Center"
+    category: "Recurse Center"
   },
 ]
 
